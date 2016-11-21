@@ -1,0 +1,30 @@
+kind: Job
+apiVersion: extensions/v1beta1
+metadata:
+  name: pachd-init
+  labels:
+    app: pachd-init
+    suite: pachyderm
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  selector:
+    matchLabels:
+      app: pachd-init
+      suite: pachyderm
+  template:
+    metadata:
+      name: pachd-init
+      labels:
+        app: pachd-init
+        suite: pachyderm
+    spec:
+      containers:
+        - name: pachd-init
+          image: '{{ .Values.pachd.image.repository }}:{{ .Values.pachd.image.tag }}'
+          env:
+            - name: PACH_ROOT
+              value: /pach
+            - name: INIT
+              value: 'true'
+          imagePullPolicy: {{ .Values.pachd.image.pullPolicy }}
+      restartPolicy: OnFailure

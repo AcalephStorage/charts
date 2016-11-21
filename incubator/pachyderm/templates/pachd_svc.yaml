@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: pachd
+  labels:
+    app: pachd
+    suite: pachyderm
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  ports:
+    - name: api-grpc-port
+      port: 650
+      nodePort: 30650
+    - name: trace-port
+      port: 651
+      nodePort: 30651
+  selector:
+    app: pachd
+  type: NodePort

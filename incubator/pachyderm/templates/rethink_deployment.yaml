@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rethink
+  labels:
+    app: rethink
+    suite: pachyderm
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: {{ .Values.registry.replicaCount }}
+  template:
+    metadata:
+      name: rethink
+      labels:
+        app: rethink
+        suite: pachyderm
+    spec:
+      volumes:
+        - name: rethink-storage
+          persistentVolumeClaim:
+            claimName: rethink-volume-claim
+      containers:
+        - name: rethink
+          image: '{{ .Values.rethink.image.repository }}:{{ .Values.rethink.image.tag }}'
+          command:
+            - rethinkdb
+          args:
+            - '-d'
+            - /var/rethinkdb/data
+            - '--bind'
+            - all
+            - '--cache-size'
+            - '{{ .Values.rethink.cacheSize }}'
+          ports:
+            - name: admin-port
+              containerPort: 8080
+            - name: driver-port
+              containerPort: 28015
+            - name: cluster-port
+              containerPort: 29015
+          resources:
+            requests:
+              memory: 1024M
+          volumeMounts:
+            - name: rethink-storage
+              mountPath: /var/rethinkdb/
+          imagePullPolicy: {{ .Values.rethink.image.pullPolicy }}

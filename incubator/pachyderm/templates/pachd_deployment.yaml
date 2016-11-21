@@ -1,0 +1,63 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: pachd
+  labels:
+    app: pachd
+    suite: pachyderm
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: {{ .Values.pachd.replicaCount }}
+  template:
+    metadata:
+      name: pachd
+      labels:
+        app: pachd
+        suite: pachyderm
+    spec:
+      volumes:
+        - name: pach-disk
+          hostPath:
+            path: /tmp/pach/pachd
+      containers:
+        - name: pachd
+          image: '{{ .Values.pachd.image.repository }}:{{ .Values.pachd.image.tag }}'
+          ports:
+            - name: api-grpc-port
+              containerPort: 650
+              protocol: TCP
+            - name: trace-port
+              containerPort: 651
+          env:
+            - name: PACH_ROOT
+              value: /pach
+            - name: NUM_SHARDS
+              value: '32'
+            - name: STORAGE_BACKEND
+            - name: PACHD_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: JOB_SHIM_IMAGE
+              value: 'pachyderm/job-shim:1.2.3'
+            - name: JOB_IMAGE_PULL_POLICY
+              value: IfNotPresent
+            - name: PACHD_VERSION
+              value: 1.2.3
+            - name: METRICS
+              value: 'true'
+          volumeMounts:
+            - name: pach-disk
+              mountPath: /pach
+          readinessProbe:
+            exec:
+              command:
+                - ./pachd
+                - '--readiness-check'
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+          imagePullPolicy: {{ .Values.pachd.image.pullPolicy }}
+          securityContext:
+            privileged: true
+      serviceAccountName: pachyderm

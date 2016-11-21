@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: registry
+  labels:
+    app: registry
+    suite: pachyderm
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  ports:
+    - name: registry
+      port: 5000
+      nodePort: 30500
+  selector:
+    app: registry
+  type: NodePort

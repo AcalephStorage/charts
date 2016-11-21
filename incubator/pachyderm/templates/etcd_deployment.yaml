@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: etcd
+  labels:
+    app: etcd
+    suite: pachyderm
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: {{ .Values.etcd.replicaCount }}
+  template:
+    metadata:
+      name: etcd
+      labels:
+        app: etcd
+        suite: pachyderm
+    spec:
+      volumes:
+        - name: etcd-storage
+          hostPath:
+            path: /tmp/pach/etcd
+      containers:
+        - name: etcd
+          image: '{{ .Values.etcd.image.repository }}:{{ .Values.etcd.image.tag }}'
+          command:
+            - /usr/local/bin/etcd
+            - '--bind-addr=0.0.0.0:2379'
+            - '--data-dir=/var/data/etcd'
+          ports:
+            - name: client-port
+              containerPort: 2379
+            - name: peer-port
+              containerPort: 2380
+          volumeMounts:
+            - name: etcd-storage
+              mountPath: /var/data/etcd
+          imagePullPolicy: {{ .Values.etcd.image.pullPolicy }}

@@ -1,0 +1,22 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: rethink
+  labels:
+    app: rethink
+    suite: pachyderm
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  ports:
+    - name: admin-port
+      port: 8080
+      nodePort: 32080
+    - name: driver-port
+      port: 28015
+      nodePort: 32081
+    - name: cluster-port
+      port: 29015
+      nodePort: 32082
+  selector:
+    app: rethink
+  type: NodePort

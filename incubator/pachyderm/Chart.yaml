@@ -1,0 +1,10 @@
+apiVersion: v1
+description: "Pachyderm is a data lake that offers complete version control for data and leverages the container ecosystem to provide reproducible data processing"
+name: pachyderm
+version: 0.1.0
+home: "http://pachyderm.io"
+sources:
+  - "https://github.com/pachyderm/pachyderm"
+maintainers:
+  - name: Hunter Nield
+    email: hunter@acale.ph

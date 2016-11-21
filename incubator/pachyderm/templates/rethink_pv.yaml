@@ -1,0 +1,16 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: rethink-volume
+  labels:
+    app: rethink-volume
+    suite: pachyderm-pps-storage
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  capacity:
+    storage: '0'
+  hostPath:
+    path: /tmp/pach/rethink
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain

@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: registry
+  labels:
+    app: registry
+    suite: pachyderm
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: {{ .Values.registry.replicaCount }}
+  template:
+    metadata:
+      name: registry
+      labels:
+        app: registry
+        suite: pachyderm
+    spec:
+      volumes:
+        - name: image-storage
+      containers:
+        - name: registry
+          image: '{{ .Values.registry.image.repository }}:{{ .Values.registry.image.tag }}'
+          ports:
+            - name: registry
+              containerPort: 5000
+          env:
+            - name: REGISTRY_HTTP_ADDR
+              value: ':5000'
+            - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
+              value: /var/lib/registry
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          volumeMounts:
+            - name: image-storage
+              mountPath: /var/lib/registry
+          imagePullPolicy: {{ .Values.registry.image.pullPolicy }}

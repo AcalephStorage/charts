@@ -1,0 +1,59 @@
+# Default values for pachyderm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+pachd:
+  replicaCount: 1
+  image:
+    repository: "pachyderm/pachd"
+    tag: 1.2.3
+    pullPolicy: IfNotPresent
+  # resources:
+  #   limits:
+  #     cpu: 100m
+  #     memory: 128Mi
+  #   requests:
+  #     cpu: 100m
+  #     memory: 128Mi
+
+etcd:
+  replicaCount: 1
+  image:
+    repository: "gcr.io/google_containers/etcd"
+    tag: 2.0.12
+    pullPolicy: IfNotPresent
+  # resources:
+  #   limits:
+  #     cpu: 100m
+  #     memory: 128Mi
+  #   requests:
+  #     cpu: 100m
+  #     memory: 128Mi
+
+registry:
+  replicaCount: 1
+  image:
+    repository: "registry"
+    tag: 2
+    pullPolicy: IfNotPresent
+  # resources:
+  #   limits:
+  #     cpu: 100m
+  #     memory: 128Mi
+  #   requests:
+  #     cpu: 100m
+  #     memory: 128Mi
+
+rethink:
+  replicaCount: 1
+  image:
+    repository: "rethinkdb"
+    tag: 2.3.3
+    pullPolicy: IfNotPresent
+  cacheSize: 768
+  # resources:
+  #   limits:
+  #     cpu: 100m
+  #     memory: 128Mi
+  #   requests:
+  #     cpu: 100m
+  #     memory: 128Mi
