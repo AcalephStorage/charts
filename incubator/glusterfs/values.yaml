@@ -1,0 +1,66 @@
+# Default values for glusterfs.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+
+glusterfs:
+  image:
+    repository: heketi/gluster
+    tag: latest
+    pullPolicy: Always
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+heketi:
+  image:
+    repository: heketi/heketi
+    tag: latest
+    pullPolicy: Always
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+
+topology:
+  - node:
+      hostnames:
+        manage:
+          - node0
+        storage:
+          - 192.168.10.100
+      zone: 1
+    devices:
+      - /dev/vdb
+      - /dev/vdc
+      - /dev/vdd
+  - node:
+      hostnames:
+        manage:
+          - node1
+        storage:
+          - 192.168.10.101
+      zone: 1
+    devices:
+      - /dev/vdb
+      - /dev/vdc
+      - /dev/vdd
+  - node:
+      hostnames:
+        manage:
+          - node2
+        storage:
+          - 192.168.10.102
+      zone: 1
+    devices:
+      - /dev/vdb
+      - /dev/vdc
+      - /dev/vdd

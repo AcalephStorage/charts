@@ -1,0 +1,10 @@
+apiVersion: v1
+description: GlusterFS is a scalable network filesystem
+name: glusterfs
+home: https://www.gluster.org
+version: 0.1.0
+sources:
+  - https://github.com/gluster/gluster-kubernetes
+maintainers:
+  - name: Hunter Nield
+    email: hunter@acale.ph
