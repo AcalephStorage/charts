@@ -1,10 +1,15 @@
+{{- range $index, $node := .Values.glusterfs.nodes }}
+---
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: glusterfs-<GLUSTERFS_NODE>
+  name: "glusterfs-{{ $node }}"
   labels:
     glusterfs: deployment
-    glusterfs-node: <GLUSTERFS_NODE>
+    glusterfs-node: "{{ $node }}"
+    heritage: {{ $.Release.Service | quote }}
+    release: {{ $.Release.Name | quote }}
+    chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
   annotations:
     description: GlusterFS container deployment template
     tags: glusterfs
@@ -16,14 +21,18 @@ spec:
       labels:
         name: glusterfs
         glusterfs: pod
-        glusterfs-node: <GLUSTERFS_NODE>
+        glusterfs-node: "{{ $node }}"
+        heritage: {{ $.Release.Service | quote }}
+        release: {{ $.Release.Name | quote }}
+        chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
     spec:
+      serviceAccountName: heketi-service-account
       nodeSelector:
-        kubernetes.io/hostname: <GLUSTERFS_NODE>
+        kubernetes.io/hostname: "{{ $node }}"
       hostNetwork: true
       containers:
-        - image: '{{ .Values.glusterfs.repository }}:{{ .Values.glusterfs.tag }}'
-          imagePullPolicy: {{ .Values.glusterfs.pullPolicy }}
+        - image: '{{ $.Values.glusterfs.image.repository }}:{{ $.Values.glusterfs.image.tag }}'
+          imagePullPolicy: {{ $.Values.glusterfs.image.pullPolicy }}
           name: glusterfs
           volumeMounts:
             - name: glusterfs-heketi
@@ -83,3 +92,5 @@ spec:
         - name: glusterfs-cgroup
           hostPath:
             path: /sys/fs/cgroup
+
+{{- end }}

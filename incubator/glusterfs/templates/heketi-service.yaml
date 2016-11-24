@@ -5,7 +5,9 @@ metadata:
   labels:
     glusterfs: heketi-service
     deploy-heketi: support
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
   annotations:
     description: Exposes Heketi Service
 spec:

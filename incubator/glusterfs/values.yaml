@@ -5,7 +5,7 @@ replicaCount: 1
 
 glusterfs:
   image:
-    repository: heketi/gluster
+    repository: gluster/gluster-centos
     tag: latest
     pullPolicy: Always
   resources:
@@ -15,6 +15,10 @@ glusterfs:
     requests:
       cpu: 100m
       memory: 128Mi
+  nodes:
+    - "10.140.0.3"
+    - "10.140.0.4"
+    - "10.140.0.5"
 
 heketi:
   image:
@@ -34,33 +38,27 @@ topology:
   - node:
       hostnames:
         manage:
-          - node0
+          - 10.140.0.3
         storage:
-          - 192.168.10.100
+          - 10.140.0.3
       zone: 1
     devices:
-      - /dev/vdb
-      - /dev/vdc
-      - /dev/vdd
+      - /dev/sdd
   - node:
       hostnames:
         manage:
-          - node1
+          - 10.140.0.4
         storage:
-          - 192.168.10.101
+          - 10.140.0.4
       zone: 1
     devices:
-      - /dev/vdb
-      - /dev/vdc
-      - /dev/vdd
+      - /dev/sdd
   - node:
       hostnames:
         manage:
-          - node2
+          - 10.140.0.5
         storage:
-          - 192.168.10.102
+          - 10.140.0.5
       zone: 1
     devices:
-      - /dev/vdb
-      - /dev/vdc
-      - /dev/vdd
+      - /dev/sdd

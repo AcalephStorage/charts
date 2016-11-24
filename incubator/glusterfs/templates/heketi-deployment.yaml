@@ -4,6 +4,9 @@ metadata:
   name: heketi
   labels:
     glusterfs: heketi-deployment
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
   annotations:
     description: Defines how to deploy Heketi
 spec:
@@ -14,11 +17,14 @@ spec:
       labels:
         name: heketi
         glusterfs: heketi-pod
+        heritage: {{.Release.Service | quote }}
+        release: {{.Release.Name | quote }}
+        chart: "{{.Chart.Name}}-{{.Chart.Version}}"
     spec:
       serviceAccountName: heketi-service-account
       containers:
-        - image: '{{ .Values.heketi.repository }}:{{ .Values.heketi.tag }}'
-          imagePullPolicy: {{ .Values.heketi.pullPolicy }}
+        - image: '{{ .Values.heketi.image.repository }}:{{ .Values.heketi.image.tag }}'
+          imagePullPolicy: {{ .Values.heketi.image.pullPolicy }}
           name: heketi
           env:
             - name: HEKETI_EXECUTOR
