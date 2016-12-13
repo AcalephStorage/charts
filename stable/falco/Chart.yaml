@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Sysdig Falco is a behavioral activity monitor designed to detect anomalous activity in your applications 
+name: falco
+version: 0.1.0
