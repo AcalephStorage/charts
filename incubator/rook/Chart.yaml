@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Open, Cloud Native, and Universal Distributed Storage
+name: rook
+version: 0.1.0
