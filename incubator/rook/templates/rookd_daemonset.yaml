@@ -1,18 +1,23 @@
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
-  name: {{ template "fullname" . }}
+  name: rookd
+  labels:
+    app: rook
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
 spec:
   template:
     metadata:
       labels:
-        app: {{ template "fullname" . }}
+        app: rook
         chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
         release: "{{ .Release.Name }}"
         heritage: "{{ .Release.Service }}"
     spec:
       containers:
-      - name: {{ .Chart.Name }}
+      - name: rookd
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         securityContext:
@@ -23,7 +28,7 @@ spec:
         - name: ROOKD_DISCOVERY_URL
           valueFrom:
             configMapKeyRef:
-              name: {{ template "fullname" . }}
+              name: rookd-discovery
               key: discovery-token
         - name: ROOKD_PRIVATE_IPV4
           valueFrom:
