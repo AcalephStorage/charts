@@ -1,7 +1,7 @@
 # Default values for rook.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-replicaCount: 1
+
 image:
   repository: quay.io/rook/rookd
   tag: v0.2.1
@@ -19,9 +19,17 @@ resources:
     cpu: 100m
     memory: 1Gi
 
+# Disable for testing
+hostNetwork: true
+
 # Generate with: curl -s -w "\n" 'https://discovery.etcd.io/new?size=1'
 # https://discovery.etcd.io/ec34d5490a92ce6973925f5b36bfdfc4
 discoveryToken:
 
 # sdb,sdc
 dataDevices:
+
+# Disable for testing (using an emptyDir)
+persistence:
+  enabled: true
+  hostPath: /var/lib/rook
