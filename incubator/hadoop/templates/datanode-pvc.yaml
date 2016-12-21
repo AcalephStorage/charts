@@ -1,0 +1,19 @@
+{{- if .Values.Datanode.persistence.enabled }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "datanode-fullname" . }}
+  labels:
+    component: "{{.Release.Name}}-{{.Values.Datanode.Component}}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+  annotations:
+    volume.alpha.kubernetes.io/storage-class: {{ .Values.Datanode.persistence.storageClass | quote }}
+spec:
+  accessModes:
+    - {{ .Values.Datanode.persistence.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.Datanode.persistence.size | quote }}
+{{- end }}

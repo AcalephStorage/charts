@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "datanode-fullname" . }}
+  labels:
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    component: "{{.Release.Name}}-{{.Values.Datanode.Component}}"
+  annotations:
+    "helm.sh/created": {{.Release.Time.Seconds | quote }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: "{{.Release.Name}}-{{.Values.Datanode.Component}}"
+  template:
+    metadata:
+      labels:
+        heritage: {{.Release.Service | quote }}
+        release: {{.Release.Name | quote }}
+        chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+        component: "{{.Release.Name}}-{{.Values.Datanode.Component}}"
+      annotations:
+        helm.sh/created: {{.Release.Time.Seconds | quote }}
+    spec:
+      containers:
+      - name: {{ template "datanode-fullname" . }}
+        image: "{{.Values.Datanode.Image}}:{{.Values.Datanode.ImageTag}}"
+        imagePullPolicy: "{{.Values.Datanode.pullPolicy}}"
+        args:
+          - "datanode"
+        resources:
+{{ toYaml .Values.Datanode.resources | indent 10 }}
+        env:
+        - name: NAMENODE
+          value: "{{ template "namenode-fullname" . }}"
+        volumeMounts:
+        - name: datadir
+          mountPath: /data
+      terminationGracePeriodSeconds: 60
+      volumes:
+      - name: datadir
+        {{- if .Values.Datanode.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ template "datanode-fullname" . }}
+        {{- else }}
+        emptyDir: {}
+        {{- end }}

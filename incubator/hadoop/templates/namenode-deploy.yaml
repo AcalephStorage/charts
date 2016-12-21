@@ -1,0 +1,78 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "namenode-fullname" . }}
+  labels:
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    component: "{{.Release.Name}}-{{.Values.Namenode.Component}}"
+  annotations:
+    "helm.sh/created": {{.Release.Time.Seconds | quote }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: "{{.Release.Name}}-{{.Values.Namenode.Component}}"
+  template:
+    metadata:
+      labels:
+        heritage: {{.Release.Service | quote }}
+        release: {{.Release.Name | quote }}
+        chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+        component: "{{.Release.Name}}-{{.Values.Namenode.Component}}"
+      annotations:
+        helm.sh/created: {{.Release.Time.Seconds | quote }}
+        pod.alpha.kubernetes.io/initialized: "true"
+        # Init containers are run only once in the lifetime of a pod, before
+        # it's started up for the first time. It has to exit successfully
+        # before the pod's main containers are allowed to start.
+        pod.alpha.kubernetes.io/init-containers: '[
+            {
+                "name": "format",
+                "image": "{{.Values.Namenode.Image}}:{{.Values.Namenode.ImageTag}}",
+                "args": [
+                  "namenode",
+                  "-format",
+                  "-nonInteractive"
+                ],
+                "env": [
+                  {
+                      "name": "NAMENODE",
+                      "value": "{{ template "namenode-fullname" . }}"
+                   }
+                ],
+                "volumeMounts": [
+                    {
+                        "name": "datadir",
+                        "mountPath": "/data"
+                    }
+                ]
+            }
+        ]'
+    spec:
+      containers:
+      - name: {{ template "namenode-fullname" . }}
+        image: "{{.Values.Namenode.Image}}:{{.Values.Namenode.ImageTag}}"
+        imagePullPolicy: "{{.Values.Namenode.pullPolicy}}"
+        args:
+          - "namenode"
+        ports:
+          - containerPort: {{.Values.Namenode.ContainerPort}}
+        resources:
+{{ toYaml .Values.Namenode.resources | indent 10 }}
+        env:
+        - name: NAMENODE
+          value: "{{ template "namenode-fullname" . }}"
+        volumeMounts:
+        - name: datadir
+          mountPath: /data
+      terminationGracePeriodSeconds: 60
+      volumes:
+      - name: datadir
+        {{- if .Values.Namenode.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ template "namenode-fullname" . }}
+        {{- else }}
+        emptyDir: {}
+        {{- end }}

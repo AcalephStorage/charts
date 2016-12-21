@@ -1,0 +1,45 @@
+
+Namenode:
+  Name: namenode
+  Image: "mustafaakin/hadoop"
+  ImageTag: "latest"
+  pullPolicy: IfNotPresent
+  Replicas: 1
+  Component: "namenode"
+  Cpu: "100m"
+  Memory: "512Mi"
+  ServicePort: 50070
+  ContainerPort: 50070
+  resources:
+    limits:
+      cpu: 100m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 1024Mi
+  persistence:
+    enabled: false
+    storageClass: generic
+    accessMode: ReadWriteOnce
+    size: 8Gi
+
+
+Datanode:
+  Name: datanode
+  Image: "mustafaakin/hadoop"
+  ImageTag: "latest"
+  pullPolicy: IfNotPresent
+  Replicas: 3
+  Component: "datanode"
+  resources:
+    limits:
+      cpu: 100m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 1024Mi
+  persistence:
+    enabled: false
+    storageClass: generic
+    accessMode: ReadWriteOnce
+    size: 8Gi
