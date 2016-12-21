@@ -23,7 +23,7 @@ spec:
         component: "{{.Release.Name}}-{{.Values.Namenode.Component}}"
       annotations:
         helm.sh/created: {{.Release.Time.Seconds | quote }}
-        pod.alpha.kubernetes.io/initialized: "true"
+        pod.alpha.kubernetes.io/initialized: "false"
         # Init containers are run only once in the lifetime of a pod, before
         # it's started up for the first time. It has to exit successfully
         # before the pod's main containers are allowed to start.
@@ -31,6 +31,7 @@ spec:
             {
                 "name": "format",
                 "image": "{{.Values.Namenode.Image}}:{{.Values.Namenode.ImageTag}}",
+                "imagePullPolicy": "{{.Values.Namenode.pullPolicy}}",
                 "args": [
                   "namenode",
                   "-format",
@@ -58,7 +59,8 @@ spec:
         args:
           - "namenode"
         ports:
-          - containerPort: {{.Values.Namenode.ContainerPort}}
+          - containerPort: {{.Values.Namenode.NamenodeContainerPort}}
+          - containerPort: {{.Values.Namenode.HttpUiContainerPort}}
         resources:
 {{ toYaml .Values.Namenode.resources | indent 10 }}
         env:

@@ -11,7 +11,11 @@ metadata:
     "helm.sh/created": {{.Release.Time.Seconds | quote }}
 spec:
   ports:
-    - port: {{.Values.Namenode.ServicePort}}
-      targetPort: {{.Values.Namenode.ContainerPort}}
+    - name: namenode
+      port: {{.Values.Namenode.NamenodeServicePort}}
+      targetPort: {{.Values.Namenode.NamenodeContainerPort}}
+    - name: http-ui
+      port: {{.Values.Namenode.HttpUiServicePort}}
+      targetPort: {{.Values.Namenode.HttpUiContainerPort}}
   selector:
     component: "{{.Release.Name}}-{{.Values.Namenode.Component}}"

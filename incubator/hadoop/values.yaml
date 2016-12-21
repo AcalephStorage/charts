@@ -8,15 +8,17 @@ Namenode:
   Component: "namenode"
   Cpu: "100m"
   Memory: "512Mi"
-  ServicePort: 50070
-  ContainerPort: 50070
+  NamenodeServicePort: 8020
+  NamenodeContainerPort: 8020
+  HttpUiServicePort: 50070
+  HttpUiContainerPort: 50070
   resources:
     limits:
-      cpu: 100m
-      memory: 512Mi
+      cpu: 200m
+      memory: 1024Mi
     requests:
       cpu: 100m
-      memory: 1024Mi
+      memory: 512Mi
   persistence:
     enabled: false
     storageClass: generic
@@ -33,11 +35,11 @@ Datanode:
   Component: "datanode"
   resources:
     limits:
-      cpu: 100m
+      cpu: 200m
       memory: 512Mi
     requests:
       cpu: 100m
-      memory: 1024Mi
+      memory: 512Mi
   persistence:
     enabled: false
     storageClass: generic
