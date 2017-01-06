@@ -65,3 +65,43 @@ Httpfs:
     storageClass: generic
     accessMode: ReadWriteOnce
     size: 8Gi
+
+Resourcemanager:
+  Name: resourcemanager
+  Image: "uhopper/hadoop-resourcemanager"
+  ImageTag: "2.7.2"
+  pullPolicy: IfNotPresent
+  Replicas: 1
+  Component: "resourcemanager"
+  resources:
+    limits:
+      cpu: 200m
+      memory: 4Gi
+    requests:
+      cpu: 100m
+      memory: 500Mi
+  persistence:
+    enabled: false
+    storageClass: generic
+    accessMode: ReadWriteOnce
+    size: 8Gi
+
+Historyserver:
+  Name: historyserver
+  Image: "uhopper/hadoop-historyserver"
+  ImageTag: "2.7.2"
+  pullPolicy: IfNotPresent
+  Replicas: 1
+  Component: "historyserver"
+  resources:
+    limits:
+      cpu: 200m
+      memory: 4Gi
+    requests:
+      cpu: 100m
+      memory: 500Mi
+  persistence:
+    enabled: false
+    storageClass: generic
+    accessMode: ReadWriteOnce
+    size: 8Gi

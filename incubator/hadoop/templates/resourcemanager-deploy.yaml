@@ -3,41 +3,31 @@ apiVersion: extensions/v1beta1
 metadata:
   labels:
     app: hadoop
-    daemon: namenode
+    daemon: resourcemanager
     heritage: {{.Release.Service | quote }}
     release: {{.Release.Name | quote }}
     chart: "{{.Chart.Name}}-{{.Chart.Version}}"
   annotations:
     "helm.sh/created": {{.Release.Time.Seconds | quote }}
-  name: hadoop-namenode
+  name: hadoop-resourcemanager
 spec:
   replicas: 1
   template:
     metadata:
-      name: hadoop-namenode
+      name: hadoop-resourcemanager
       namespace: hadoop
       labels:
         app: hadoop
-        daemon: namenode
+        daemon: resourcemanager
     spec:
       serviceAccount: default
-      volumes:
-        - name: hadoop-namenode
-          {{- if .Values.Namenode.persistence.enabled }}
-          persistentVolumeClaim:
-            claimName: hadoop-namenode
-          {{- else }}
-          emptyDir: {}
-          {{- end }}
       containers:
-        - name: namenode
-          image: "{{.Values.Namenode.Image}}:{{.Values.Namenode.ImageTag}}"
-          imagePullPolicy: "{{.Values.Namenode.pullPolicy}}"
+        - name: resourcemanager
+          image: "{{.Values.Resourcemanager.Image}}:{{.Values.Resourcemanager.ImageTag}}"
+          imagePullPolicy: "{{.Values.Resourcemanager.pullPolicy}}"
           ports:
-            - name: namenode
-              containerPort: 8020
             - name: webui
-              containerPort: 50070
+              containerPort: 8088
           env:
             - name: CLUSTER_NAME
               value: hadoop
@@ -63,23 +53,9 @@ spec:
               value: "0.0.0.0"
             - name: HDFS_CONF_dfs_namenode_https___bind___host
               value: "0.0.0.0"
-            - name: YARN_CONF_yarn_resourcemanager_hostname
-              value: hadoop-resourcemanager
             - name: YARN_CONF_yarn_log___aggregation___enable
               value: "true"
             - name: YARN_CONF_yarn_nodemanager_remote___app___log___dir
               value: "/app-logs"
-          volumeMounts:
-            - name: hadoop-namenode
-              mountPath: /hadoop/dfs/
-          livenessProbe:
-              tcpSocket:
-                port: 8020
-              initialDelaySeconds: 120
-              timeoutSeconds: 5
-          readinessProbe:
-              tcpSocket:
-                port: 8020
-              timeoutSeconds: 5
           resources:
 {{ toYaml .Values.Namenode.resources | indent 12 }}
