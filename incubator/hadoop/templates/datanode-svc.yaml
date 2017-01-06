@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hadoop-datanode
+  labels:
+    app: hadoop
+    daemon: datanode
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+spec:
+  ports:
+  - port: 50010
+    name: datanode
+    protocol: TCP
+    targetPort: 50010
+  selector:
+    app: hadoop
+    daemon: datanode
+  clusterIP: None

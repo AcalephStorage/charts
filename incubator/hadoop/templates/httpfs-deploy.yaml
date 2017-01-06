@@ -1,0 +1,66 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  labels:
+    app: hadoop
+    daemon: httpfs
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+  name: hadoop-httpfs
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: hadoop-httpfs
+      labels:
+        app: hadoop
+        daemon: httpfs
+        heritage: {{.Release.Service | quote }}
+        release: {{.Release.Name | quote }}
+        chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    spec:
+      containers:
+        - name: httpfs
+          image: "{{.Values.Httpfs.Image}}:{{.Values.Httpfs.ImageTag}}"
+          imagePullPolicy: "{{.Values.Httpfs.pullPolicy}}"
+          ports:
+            - name: httpfs
+              containerPort: 14000
+          env:
+            - name: CORE_CONF_fs_defaultFS
+              value: hdfs://hadoop-namenode:8020
+            - name: MULTIHOMED_NETWORK
+              value: "0"
+            - name: HDFS_CONF_dfs_httpfs_datanode_registration_ip___hostname___check
+              value: "false"
+            - name: CLUSTER_NAME
+              value: hadoop
+            - name: CORE_CONF_hadoop_proxyuser_root_hosts
+              value: "*"
+            - name: CORE_CONF_hadoop_proxyuser_root_groups
+              value: "*"
+            - name: HDFS_CONF_dfs_client_use_datanode_hostname
+              value: "false"
+            - name: HDFS_CONF_dfs_datanode_use_datanode_hostname
+              value: "false"
+          args:
+            - "/opt/hadoop-2.7.2/sbin/httpfs.sh run"
+          livenessProbe:
+              httpGet:
+                path: /
+                port: 14000
+              initialDelaySeconds: 120
+              timeoutSeconds: 5
+          readinessProbe:
+              httpGet:
+                path: /
+                port: 14000
+              timeoutSeconds: 5
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "2Gi"
+              cpu: "1"

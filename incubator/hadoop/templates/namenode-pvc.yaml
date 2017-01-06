@@ -1,19 +1,30 @@
-{{- if .Values.Namenode.persistence.enabled }}
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: {{ template "namenode-fullname" . }}
-  labels:
-    component: "{{.Release.Name}}-{{.Values.Namenode.Component}}"
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
-  annotations:
-    volume.alpha.kubernetes.io/storage-class: {{ .Values.Namenode.persistence.storageClass | quote }}
-spec:
-  accessModes:
-    - {{ .Values.Namenode.persistence.accessMode | quote }}
-  resources:
-    requests:
-      storage: {{ .Values.Namenode.persistence.size | quote }}
-{{- end }}
+# {{- if .Values.Namenode.persistence.enabled }}
+# kind: PersistentVolumeClaim
+# apiVersion: v1
+# metadata:
+#   name: {{ template "namenode-fullname" . }}
+#   labels:
+#     component: "{{.Release.Name}}-{{.Values.Namenode.Component}}"
+#     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+#     release: "{{ .Release.Name }}"
+#     heritage: "{{ .Release.Service }}"
+#   annotations:
+#     volume.alpha.kubernetes.io/storage-class: {{ .Values.Namenode.persistence.storageClass | quote }}
+# spec:
+#   accessModes:
+#     - {{ .Values.Namenode.persistence.accessMode | quote }}
+#   resources:
+#     requests:
+#       storage: {{ .Values.Namenode.persistence.size | quote }}
+# {{- end }}
+
+# kind: PersistentVolumeClaim
+# apiVersion: v1
+# metadata:
+#   name: hadoop-namenode
+#   labels:
+#     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+#     release: "{{ .Release.Name }}"
+#     heritage: "{{ .Release.Service }}"
+# spec:
+#   emptyDir: {}

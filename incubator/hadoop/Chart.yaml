@@ -2,8 +2,6 @@ apiVersion: v1
 description: Hadoop is a framework that allows for the distributed processing of large data sets across clusters
 name: hadoop
 version: 0.1.0
-sources:
-  - https://github.com/mustafaakin/big-data-docker
 maintainers:
   - name: Acaleph
     email: hello@acale.ph

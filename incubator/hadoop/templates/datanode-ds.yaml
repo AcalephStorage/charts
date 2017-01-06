@@ -1,60 +1,53 @@
-kind: Deployment
+kind: DaemonSet
 apiVersion: extensions/v1beta1
 metadata:
+  name: hadoop-datanode
   labels:
     app: hadoop
-    daemon: namenode
+    daemon: datanode
     heritage: {{.Release.Service | quote }}
     release: {{.Release.Name | quote }}
     chart: "{{.Chart.Name}}-{{.Chart.Version}}"
   annotations:
     "helm.sh/created": {{.Release.Time.Seconds | quote }}
-  name: hadoop-namenode
 spec:
-  replicas: 1
   template:
     metadata:
-      name: hadoop-namenode
-      namespace: hadoop
+      name: hadoop-datanode
       labels:
         app: hadoop
-        daemon: namenode
+        daemon: datanode
+        heritage: {{.Release.Service | quote }}
+        release: {{.Release.Name | quote }}
+        chart: "{{.Chart.Name}}-{{.Chart.Version}}"
     spec:
-      serviceAccount: default
+#      nodeSelector: hadoop
+      hostNetwork: true
       volumes:
-        - name: hadoop-namenode
-          {{- if .Values.Namenode.persistence.enabled }}
-          persistentVolumeClaim:
-            claimName: hadoop-namenode
-          {{- else }}
+        - name: hadoop-datanode
           emptyDir: {}
-          {{- end }}
       containers:
-        - name: namenode
-          image: "{{.Values.Namenode.Image}}:{{.Values.Namenode.ImageTag}}"
-          imagePullPolicy: "{{.Values.Namenode.pullPolicy}}"
+        - name: datanode
+          image: "{{.Values.Datanode.Image}}:{{.Values.Datanode.ImageTag}}"
+          imagePullPolicy: "{{.Values.Datanode.pullPolicy}}"
           ports:
-            - name: namenode
-              containerPort: 8020
+            - name: datanode
+              containerPort: 50010
             - name: webui
-              containerPort: 50070
+              containerPort: 50075
           env:
-            - name: CLUSTER_NAME
-              value: hadoop
             - name: MULTIHOMED_NETWORK
               value: "0"
+            - name: CLUSTER_NAME
+              value: hadoop
             - name: CORE_CONF_fs_defaultFS
-              value: hdfs://hadoop-namenode:8020
+              value: hdfs://hadoop-namenode.hadoop.svc.cluster.local:8020
             - name: HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check
               value: "false"
             - name: HDFS_CONF_dfs_client_use_datanode_hostname
               value: "false"
             - name: HDFS_CONF_dfs_datanode_use_datanode_hostname
               value: "false"
-            - name: CORE_CONF_hadoop_proxyuser_root_hosts
-              value: "*"
-            - name: CORE_CONF_hadoop_proxyuser_root_groups
-              value: "*"
             - name: HDFS_CONF_dfs_namenode_rpc___bind___host
               value: "0.0.0.0"
             - name: HDFS_CONF_dfs_namenode_servicerpc___bind___host
@@ -64,16 +57,16 @@ spec:
             - name: HDFS_CONF_dfs_namenode_https___bind___host
               value: "0.0.0.0"
           volumeMounts:
-            - name: hadoop-namenode
+            - name: hadoop-datanode
               mountPath: /hadoop/dfs/
           livenessProbe:
               tcpSocket:
-                port: 8020
+                port: 50010
               initialDelaySeconds: 120
               timeoutSeconds: 5
           readinessProbe:
               tcpSocket:
-                port: 8020
+                port: 50010
               timeoutSeconds: 5
           resources:
-{{ toYaml .Values.Namenode.resources | indent 12 }}
+{{ toYaml .Values.Datanode.resources | indent 12 }}

@@ -1,8 +1,8 @@
 
 Namenode:
   Name: namenode
-  Image: "mustafaakin/hadoop"
-  ImageTag: "latest"
+  Image: "uhopper/hadoop-namenode"
+  ImageTag: "2.7.2"
   pullPolicy: IfNotPresent
   Replicas: 1
   Component: "namenode"
@@ -15,10 +15,10 @@ Namenode:
   resources:
     limits:
       cpu: 200m
-      memory: 1024Mi
+      memory: 2Gi
     requests:
       cpu: 100m
-      memory: 512Mi
+      memory: 500Mi
   persistence:
     enabled: false
     storageClass: generic
@@ -28,18 +28,38 @@ Namenode:
 
 Datanode:
   Name: datanode
-  Image: "mustafaakin/hadoop"
-  ImageTag: "latest"
+  Image: "uhopper/hadoop-datanode"
+  ImageTag: "2.7.2"
   pullPolicy: IfNotPresent
-  Replicas: 3
+  Replicas: 1
   Component: "datanode"
   resources:
     limits:
       cpu: 200m
-      memory: 512Mi
+      memory: 4Gi
     requests:
       cpu: 100m
-      memory: 512Mi
+      memory: 500Mi
+  persistence:
+    enabled: false
+    storageClass: generic
+    accessMode: ReadWriteOnce
+    size: 8Gi
+
+Httpfs:
+  Name: httpfs
+  Image: "uhopper/hadoop"
+  ImageTag: "2.7.2"
+  pullPolicy: IfNotPresent
+  Replicas: 1
+  Component: "httpfs"
+  resources:
+    limits:
+      cpu: 200m
+      memory: 4Gi
+    requests:
+      cpu: 100m
+      memory: 500Mi
   persistence:
     enabled: false
     storageClass: generic
