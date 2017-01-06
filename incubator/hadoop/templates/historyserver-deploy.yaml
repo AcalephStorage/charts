@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: "{{.Values.Historyserver.pullPolicy}}"
           ports:
             - name: webui
-              containerPort: 8088
+              containerPort: 8188
           env:
             - name: CLUSTER_NAME
               value: hadoop
@@ -68,5 +68,14 @@ spec:
           volumeMounts:
             - name: hadoop-historyserver
               mountPath: /hadoop/yarn/timeline
+          livenessProbe:
+              tcpSocket:
+                port: 8188
+              initialDelaySeconds: 120
+              timeoutSeconds: 5
+          readinessProbe:
+              tcpSocket:
+                port: 8188
+              timeoutSeconds: 5
           resources:
 {{ toYaml .Values.Namenode.resources | indent 12 }}
