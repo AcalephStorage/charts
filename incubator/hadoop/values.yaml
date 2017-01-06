@@ -86,6 +86,26 @@ Resourcemanager:
     accessMode: ReadWriteOnce
     size: 8Gi
 
+Nodemanager:
+  Name: nodemanager
+  Image: "uhopper/hadoop-nodemanager"
+  ImageTag: "2.7.2"
+  pullPolicy: IfNotPresent
+  Replicas: 1
+  Component: "nodemanager"
+  resources:
+    limits:
+      cpu: 200m
+      memory: 4Gi
+    requests:
+      cpu: 100m
+      memory: 500Mi
+  persistence:
+    enabled: false
+    storageClass: generic
+    accessMode: ReadWriteOnce
+    size: 8Gi
+
 Historyserver:
   Name: historyserver
   Image: "uhopper/hadoop-historyserver"
