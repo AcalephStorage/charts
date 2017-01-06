@@ -1,0 +1,96 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: hive
+    daemon: metastore
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+  name: hive-metastore
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hive
+        daemon: metastore
+        heritage: {{.Release.Service | quote }}
+        release: {{.Release.Name | quote }}
+        chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    spec:
+      containers:
+      - name: hive-metastore
+        image: bde2020/hive:latest
+        args:
+        - /opt/hive/bin/hive
+        - --service
+        - metastore
+        env:
+        - name: HIVE_SITE_CONF_javax_jdo_option_ConnectionURL
+          value: jdbc:postgresql://hive-metastore-postgresql/metastore
+        - name: HIVE_SITE_CONF_javax_jdo_option_ConnectionDriverName
+          value: org.postgresql.Driver
+        - name: HIVE_SITE_CONF_javax_jdo_option_ConnectionUserName
+          value: hive
+        - name: HIVE_SITE_CONF_javax_jdo_option_ConnectionPassword
+          value: hive
+        - name: HIVE_SITE_CONF_datanucleus_autoCreateSchema
+          value: "false"
+        - name: HIVE_SITE_CONF_hive_metastore_uris
+          value: thrift://hive-metastore:9083
+        - name: CORE_CONF_fs_defaultFS
+          value: hdfs://hadoop-namenode:8020
+        - name: CORE_CONF_hadoop_http_staticuser_user
+          value: root
+        - name: CORE_CONF_hadoop_proxyuser_hue_hosts
+          value: '*'
+        - name: CORE_CONF_hadoop_proxyuser_hue_groups
+          value: '*'
+        - name: HDFS_CONF_dfs_webhdfs_enabled
+          value: "true"
+        - name: HDFS_CONF_dfs_permissions_enabled
+          value: "false"
+        - name: YARN_CONF_yarn_log___aggregation___enable
+          value: "true"
+        - name: YARN_CONF_yarn_resourcemanager_recovery_enabled
+          value: "true"
+        - name: YARN_CONF_yarn_resourcemanager_store_class
+          value: org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore
+        - name: YARN_CONF_yarn_resourcemanager_fs_state___store_uri
+          value: /rmstate
+        - name: YARN_CONF_yarn_nodemanager_remote___app___log___dir
+          value: /app-logs
+        - name: YARN_CONF_yarn_log_server_url
+          value: http://hadoop-historyserver:8188/applicationhistory/logs/
+        - name: YARN_CONF_yarn_timeline___service_enabled
+          value: "true"
+        - name: YARN_CONF_yarn_timeline___service_generic___application___history_enabled
+          value: "true"
+        - name: YARN_CONF_yarn_resourcemanager_system___metrics___publisher_enabled
+          value: "true"
+        - name: YARN_CONF_yarn_resourcemanager_hostname
+          value: hadoop-resourcemanager
+        - name: YARN_CONF_yarn_timeline___service_hostname
+          value: hadoop-historyserver
+        - name: YARN_CONF_yarn_resourcemanager_address
+          value: hadoop-resourcemanager:8032
+        - name: YARN_CONF_yarn_resourcemanager_scheduler_address
+          value: hadoop-resourcemanager:8030
+        - name: YARN_CONF_yarn_resourcemanager_resource__tracker_address
+          value: hadoop-resourcemanager:8031
+        ports:
+          - name: metastore
+            containerPort: 8188
+          - name: hive
+            containerPort: 9083
+        livenessProbe:
+            tcpSocket:
+              port: 8188
+            initialDelaySeconds: 120
+            timeoutSeconds: 5
+        readinessProbe:
+            tcpSocket:
+              port: 8188
+            timeoutSeconds: 5
+        resources: {}

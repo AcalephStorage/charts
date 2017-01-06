@@ -1,0 +1,39 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hive-metastore-postgresql
+  labels:
+    app: hive
+    daemon: metastore-postgresql
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hive
+        daemon: metastore-postgresql
+        heritage: {{.Release.Service | quote }}
+        release: {{.Release.Name | quote }}
+        chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    spec:
+      containers:
+      - name: hive-metastore-postgresql
+        image: bde2020/hive-metastore-postgresql:2.1.0
+        ports:
+          - name: postgresql
+            containerPort: 5432
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+          initialDelaySeconds: 60
+          timeoutSeconds: 3
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+          initialDelaySeconds: 60
+          timeoutSeconds: 3
