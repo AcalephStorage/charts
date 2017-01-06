@@ -16,6 +16,18 @@ spec:
     name: webui
     protocol: TCP
     targetPort: 8088
+  - port: 8032
+    name: port1
+    protocol: TCP
+    targetPort: 8032
+  - port: 8031
+    name: port2
+    protocol: TCP
+    targetPort: 8031
+  - port: 8030
+    name: port3
+    protocol: TCP
+    targetPort: 8030
   selector:
     app: hadoop
     daemon: resourcemanager

@@ -28,6 +28,12 @@ spec:
           ports:
             - name: webui
               containerPort: 8088
+            - name: port1
+              containerPort: 8032
+            - name: port2
+              containerPort: 8031
+            - name: port3
+              containerPort: 8030
           env:
             - name: CLUSTER_NAME
               value: hadoop
@@ -57,5 +63,14 @@ spec:
               value: "true"
             - name: YARN_CONF_yarn_nodemanager_remote___app___log___dir
               value: "/app-logs"
+          livenessProbe:
+              tcpSocket:
+                port: 8088
+              initialDelaySeconds: 120
+              timeoutSeconds: 5
+          readinessProbe:
+              tcpSocket:
+                port: 8088
+              timeoutSeconds: 5
           resources:
 {{ toYaml .Values.Namenode.resources | indent 12 }}
