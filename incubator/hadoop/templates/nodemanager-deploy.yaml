@@ -1,0 +1,70 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  labels:
+    app: hadoop
+    daemon: nodemanager
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+  annotations:
+    "helm.sh/created": {{.Release.Time.Seconds | quote }}
+  name: hadoop-nodemanager
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: hadoop-nodemanager
+      namespace: hadoop
+      labels:
+        app: hadoop
+        daemon: nodemanager
+    spec:
+      serviceAccount: default
+      containers:
+        - name: nodemanager
+          image: "{{.Values.Nodemanager.Image}}:{{.Values.Nodemanager.ImageTag}}"
+          imagePullPolicy: "{{.Values.Nodemanager.pullPolicy}}"
+          ports:
+            - name: webui
+              containerPort: 8042
+          env:
+            - name: CLUSTER_NAME
+              value: hadoop
+            - name: MULTIHOMED_NETWORK
+              value: "0"
+            - name: CORE_CONF_fs_defaultFS
+              value: hdfs://hadoop-namenode:8020
+            - name: HDFS_CONF_dfs_namenode_datanode_registration_ip___hostname___check
+              value: "false"
+            - name: HDFS_CONF_dfs_client_use_datanode_hostname
+              value: "false"
+            - name: HDFS_CONF_dfs_datanode_use_datanode_hostname
+              value: "false"
+            - name: CORE_CONF_hadoop_proxyuser_root_hosts
+              value: "*"
+            - name: CORE_CONF_hadoop_proxyuser_root_groups
+              value: "*"
+            - name: HDFS_CONF_dfs_namenode_rpc___bind___host
+              value: "0.0.0.0"
+            - name: HDFS_CONF_dfs_namenode_servicerpc___bind___host
+              value: "0.0.0.0"
+            - name: HDFS_CONF_dfs_namenode_http___bind___host
+              value: "0.0.0.0"
+            - name: HDFS_CONF_dfs_namenode_https___bind___host
+              value: "0.0.0.0"
+            - name: YARN_CONF_yarn_log___aggregation___enable
+              value: "true"
+            - name: YARN_CONF_yarn_nodemanager_remote___app___log___dir
+              value: "/app-logs"
+          livenessProbe:
+              tcpSocket:
+                port: 8042
+              initialDelaySeconds: 120
+              timeoutSeconds: 5
+          readinessProbe:
+              tcpSocket:
+                port: 8042
+              timeoutSeconds: 5
+          resources:
+{{ toYaml .Values.Namenode.resources | indent 12 }}
