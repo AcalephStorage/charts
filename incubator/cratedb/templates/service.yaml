@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: crate-discovery
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    #app: {{ template "fullname" . }}
+    app: crate
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - port: {{ .Values.service.web.externalPort }}
+    targetPort: {{ .Values.service.web.internalPort }}
+    protocol: TCP
+    name: {{ .Values.service.web.name }}
+  - port: {{ .Values.service.cluster.externalPort }}
+    targetPort: {{ .Values.service.cluster.internalPort }}
+    protocol: TCP
+    name: {{ .Values.service.cluster.name }}
+  selector:
+    #app: {{ template "fullname" . }}
+    app: crate

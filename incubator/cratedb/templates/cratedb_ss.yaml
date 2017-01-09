@@ -1,0 +1,68 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: crate
+  labels:
+    app: crate
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+  annotations:
+    "helm.sh/created": {{.Release.Time.Seconds | quote }}
+spec:
+  serviceName: "crate-db"
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: crate
+        heritage: {{.Release.Service | quote }}
+        release: {{.Release.Name | quote }}
+        chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+    spec:
+      containers:
+      - name: crate
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+          - /docker-entrypoint.sh
+          - -Des.cluster.name=${CLUSTER_NAME}
+          - -Des.multicast.enabled=false
+          - -Des.discovery.type=srv
+          - -Des.discovery.zen.minimum_master_nodes=1
+          - -Des.gateway.recover_after_nodes=1
+          - -Des.gateway.expected_nodes=${EXPECTED_NODES}
+          - -Des.discovery.srv.query=_cluster._tcp.crate-discovery.default.svc.cluster.local
+        volumeMounts:
+            - mountPath: /data
+              name: data
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+        ports:
+        - containerPort: {{ .Values.service.web.internalPort }}
+          name: web
+        - containerPort: {{ .Values.service.cluster.internalPort }}
+          name: cluster
+        env:
+        # Half the available memory.
+        - name: CRATE_HEAP_SIZE
+          value: "1g"
+        - name: EXPECTED_NODES
+          value: "{{ .Values.replicaCount }}"
+        - name: CLUSTER_NAME
+          value: "my-crate-cluster"
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: {{ .Values.service.web.internalPort }}
+        #   initialDelaySeconds: 120
+        # readinessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: {{ .Values.service.web.internalPort }}
+        #   initialDelaySeconds: 120
+      volumes:
+        - name: data
+          emptyDir: {}
