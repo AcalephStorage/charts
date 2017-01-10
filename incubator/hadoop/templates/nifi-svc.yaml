@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hadoop-nifi
+  labels:
+    app: hadoop
+    daemon: nifi
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+spec:
+  ports:
+  - port: 8080
+    name: web
+    protocol: TCP
+    targetPort: 8080
+  - port: 8081
+    name: nifi
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    app: hadoop
+    daemon: nifi
+  # type: LoadBalancer

@@ -125,3 +125,23 @@ Historyserver:
     storageClass: generic
     accessMode: ReadWriteOnce
     size: 8Gi
+
+Nifi:
+  Name: nifi
+  Image: "mkobit/nifi"
+  ImageTag: "latest"
+  pullPolicy: IfNotPresent
+  Replicas: 1
+  Component: "nifi"
+  resources:
+    limits:
+      cpu: 200m
+      memory: 2Gi
+    requests:
+      cpu: 100m
+      memory: 500Mi
+  persistence:
+    enabled: false
+    storageClass: generic
+    accessMode: ReadWriteOnce
+    size: 8Gi

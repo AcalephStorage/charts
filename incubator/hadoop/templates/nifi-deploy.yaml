@@ -1,0 +1,84 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  labels:
+    app: hadoop
+    daemon: nifi
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+  annotations:
+    "helm.sh/created": {{.Release.Time.Seconds | quote }}
+  name: hadoop-nifi
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: hadoop-nifi
+      namespace: hadoop
+      labels:
+        app: hadoop
+        daemon: nifi
+    spec:
+      serviceAccount: default
+      volumes:
+        - name: database-repo
+          {{- if .Values.Nifi.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: hadoop-nifi
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: flowfile-repo
+          {{- if .Values.Nifi.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: hadoop-nifi
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: content-repo
+          {{- if .Values.Nifi.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: hadoop-nifi
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: provenance-repo
+          {{- if .Values.Nifi.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: hadoop-nifi
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+      containers:
+        - name: nifi
+          image: "{{.Values.Nifi.Image}}:{{.Values.Nifi.ImageTag}}"
+          imagePullPolicy: "{{.Values.Nifi.pullPolicy}}"
+          ports:
+            - name: web
+              containerPort: 8080
+            - name: nifi
+              containerPort: 8081
+          # env:
+          #   - name: CLUSTER_NAME
+          #     value: hadoop
+          volumeMounts:
+            - name: database-repo
+              mountPath: /opt/nifi/database_repository
+            - name: flowfile-repo
+              mountPath: /opt/nifi/flowfile_repository
+            - name: content-repo
+              mountPath: /opt/nifi/content_repository
+            - name: provenance-repo
+              mountPath: /opt/nifi/provenance_repository
+          # livenessProbe:
+          #     tcpSocket:
+          #       port: 8080
+          #     initialDelaySeconds: 120
+          #     timeoutSeconds: 5
+          # readinessProbe:
+          #     tcpSocket:
+          #       port: 8080
+          #     timeoutSeconds: 5
+          resources:
+{{ toYaml .Values.Nifi.resources | indent 12 }}
