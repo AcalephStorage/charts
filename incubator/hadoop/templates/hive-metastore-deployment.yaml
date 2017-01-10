@@ -80,8 +80,6 @@ spec:
         - name: YARN_CONF_yarn_resourcemanager_resource__tracker_address
           value: hadoop-resourcemanager:8031
         ports:
-          - name: metastore
-            containerPort: 8188
           - name: hive
             containerPort: 9083
         livenessProbe:

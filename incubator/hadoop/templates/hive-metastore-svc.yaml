@@ -12,10 +12,6 @@ metadata:
     "helm.sh/created": {{.Release.Time.Seconds | quote }}
 spec:
   ports:
-  - port: 8188
-    name: metastore
-    protocol: TCP
-    targetPort: 8188
   - port: 9083
     name: hive
     protocol: TCP
