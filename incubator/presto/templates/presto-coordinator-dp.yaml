@@ -1,0 +1,51 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: presto-coordinator
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        service: presto-coordinator
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      volumes:
+        - name: presto-catalog
+          configMap:
+            name: presto-catalog
+      containers:
+      - args:
+        - coordinator
+        env:
+        - name: PRESTO_JVM_MAX_HEAP
+          value: 512M
+        - name: PRESTO_QUERY_MAX_MEMORY
+          value: 1GB
+        - name: PRESTO_QUERY_MAX_MEMORY_PER_NODE
+          value: 256MB
+        - name: TERM
+          value: xterm
+        - name: PRESTO_DISCOVERY_URI
+          value: http://presto-coordinator:8080
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: presto-coordinator
+        ports:
+        - containerPort: {{ .Values.service.internalPort }}
+          protocol: TCP
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: {{ .Values.service.internalPort }}
+        # readinessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: {{ .Values.service.internalPort }}
+        volumeMounts:
+          - name: presto-catalog
+            mountPath: /usr/local/presto-server-0.163/etc/catalog
+        resources:
+{{ toYaml .Values.resources | indent 12 }}

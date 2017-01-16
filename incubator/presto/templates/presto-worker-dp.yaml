@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: presto-worker
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        service: presto-worker
+    spec:
+      volumes:
+        - name: presto-catalog
+          configMap:
+            name: presto-catalog
+      containers:
+      - args:
+        - worker
+        env:
+        - name: PRESTO_JVM_MAX_HEAP
+          value: 512M
+        - name: PRESTO_QUERY_MAX_MEMORY
+          value: 1GB
+        - name: PRESTO_QUERY_MAX_MEMORY_PER_NODE
+          value: 256MB
+        - name: TERM
+          value: xterm
+        - name: PRESTO_DISCOVERY_URI
+          value: http://presto-coordinator:8080
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: presto-worker
+        volumeMounts:
+          - name: presto-catalog
+            mountPath: /usr/local/presto-server-0.163/etc/catalog
+        resources:
+{{ toYaml .Values.resources | indent 12 }}

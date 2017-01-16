@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: presto-catalog
+data:
+  cassandra.properties: |-
+    connector.name=cassandra
+    cassandra.contact-points=cassandra-cassandra-0.cassandra-cassandra.cassandra.svc.cluster.local
+    cassandra.username=cassandra
+    cassandra.password=am1h@n
+
+  localfile.properties: |-
+    connector.name=localfile
+    presto-logs.http-request-log.location=/presto/var/log
+    presto-logs.http-request-log.pattern=http-request.*/usr/local/presto-server-0.163/etc/catalog
+
+  jmx.properties: |-
+    connector.name=jmx
+    jmx.dump-tables=java.lang:type=Runtime,com.facebook.presto.execution.scheduler:name=NodeScheduler
+    jmx.dump-period=10s
