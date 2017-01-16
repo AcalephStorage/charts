@@ -1,0 +1,12 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: cassandra-1
+spec:
+  capacity:
+    storage: 8Gi
+  accessModes:
+    - ReadWriteOnce
+  gcePersistentDisk: 
+    fsType: "ext4" 
+    pdName: "cassandra-disk-1"
