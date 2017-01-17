@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.service.internalPort }}
+        env:
+        - name: MB_JETTY_PORT
+          value: "3000"
+        # - name: MB_DB_TYPE
+        #   value: "postgres"
+        # - name: MB_DB_PORT
+        #   value: "4300"
+        # - name: MB_DB_HOST
+        #   value: "crate-discovery.crate.svc.cluster.local"
+        # - name: MB_DB_CONNECTION_URI
+        #   value: crate-discovery.crate.svc.cluster.local?ssl=false
+        # - name: MB_DB_DBNAME
+        #   value:
+        # - name: MB_DB_USER
+        #   value: ""
+        # - name: MB_DB_PASS
+        #   value: ""
+        # livenessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: {{ .Values.service.internalPort }}
+        # readinessProbe:
+        #   httpGet:
+        #     path: /
+        #     port: {{ .Values.service.internalPort }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
