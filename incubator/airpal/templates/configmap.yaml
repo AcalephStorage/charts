@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}-config
+data:
+  reference.yml: |-
+    # Logging settings
+    logging:
+      loggers:
+        org.apache.shiro: INFO
+
+      # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+      level: INFO
+
+    # HTTP-specific options.
+    server:
+      applicationConnectors:
+        - type: http
+          port: 4123
+          idleTimeout: 10 seconds
+
+      adminConnectors:
+        - type: http
+          port: 4124
+
+    shiro:
+      iniConfigs: ["classpath:shiro_allow_all.ini"]
+
+    dataSourceFactory:
+      driverClass: com.mysql.jdbc.Driver
+      user: airpal
+      password: password
+      url: jdbc:mysql://airpalmysql-mysql.airpalmysql.svc.cluster.local/airpal
+
+    flywayFactory:
+      locations: ["classpath:db.migration.common", "classpath:db.migration.mysql"]
+
+    # The URL to the Presto coordinator.
+    prestoCoordinator: http://presto-coordinator.presto.svc.cluster.local:8080
