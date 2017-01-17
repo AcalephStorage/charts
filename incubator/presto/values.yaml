@@ -13,8 +13,8 @@ service:
   internalPort: 8080
 resources:
   limits:
-    cpu: 100m
+    cpu: 1000m
     memory: 1Gi
   requests:
-    cpu: 100m
+    cpu: 200m
     memory: 1Gi
