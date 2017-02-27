@@ -15,10 +15,6 @@ glusterfs:
     requests:
       cpu: 100m
       memory: 128Mi
-  nodes:
-    - "10.140.0.3"
-    - "10.140.0.4"
-    - "10.140.0.5"
 
 heketi:
   image:

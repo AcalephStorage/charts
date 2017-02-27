@@ -23,51 +23,45 @@ spec:
     spec:
       serviceAccountName: heketi-service-account
       containers:
-        - image: '{{ .Values.heketi.image.repository }}:{{ .Values.heketi.image.tag }}'
-          imagePullPolicy: {{ .Values.heketi.image.pullPolicy }}
-          name: heketi
-          env:
-            - name: HEKETI_EXECUTOR
-              value: kubernetes
-            - name: HEKETI_KUBE_USE_SECRET
-              value: 'y'
-            - name: HEKETI_KUBE_TOKENFILE
-              value: /var/run/secrets/kubernetes.io/serviceaccount/token
-            - name: HEKETI_KUBE_NAMESPACEFILE
-              value: /var/run/secrets/kubernetes.io/serviceaccount/namespace
-            - name: HEKETI_FSTAB
-              value: /var/lib/heketi/fstab
-            - name: HEKETI_SNAPSHOT_LIMIT
-              value: '14'
-            - name: HEKETI_KUBE_INSECURE
-              value: 'y'
-            - name: HEKETI_KUBE_APIHOST
-              value: 'https://kubernetes.default:443/'
-          ports:
-            - containerPort: 8080
-          volumeMounts:
-            - name: db
-              mountPath: /var/lib/heketi
-            - name: heketi-topology
-              mountPath: /etc/heketi-topology
-          readinessProbe:
-            timeoutSeconds: 3
-            initialDelaySeconds: 3
-            httpGet:
-              path: /hello
-              port: 8080
-          livenessProbe:
-            timeoutSeconds: 3
-            initialDelaySeconds: 30
-            httpGet:
-              path: /hello
-              port: 8080
-      volumes:
+      - image: '{{ .Values.heketi.image.repository }}:{{ .Values.heketi.image.tag }}'
+        imagePullPolicy: {{ .Values.heketi.image.pullPolicy }}
+        name: heketi
+        env:
+        - name: HEKETI_EXECUTOR
+          value: kubernetes
+        - name: HEKETI_FSTAB
+          value: "/var/lib/heketi/fstab"
+        - name: HEKETI_SNAPSHOT_LIMIT
+          value: '14'
+        - name: HEKETI_KUBE_GLUSTER_DAEMONSET
+          value: "y"
+        ports:
+        - containerPort: 8080
+        volumeMounts:
         - name: db
-          # glusterfs:
-          #   endpoints: heketi-storage-endpoints
-          #   path: heketidbstorage
-          emptyDir: {}
+          mountPath: "/var/lib/heketi"
+        - name: heketi-db-secret
+          mountPath: "/backupdb"
         - name: heketi-topology
-          configMap:
-            name: heketi-topology
+          mountPath: /etc/heketi-topology
+        readinessProbe:
+          timeoutSeconds: 3
+          initialDelaySeconds: 3
+          httpGet:
+            path: "/hello"
+            port: 8080
+        livenessProbe:
+          timeoutSeconds: 3
+          initialDelaySeconds: 30
+          httpGet:
+            path: "/hello"
+            port: 8080
+      volumes:
+      - name: db
+        emptyDir: {}
+      - name: heketi-db-secret
+        secret:
+          secretName: heketi-db-backup
+      - name: heketi-topology
+        configMap:
+          name: heketi-topology
