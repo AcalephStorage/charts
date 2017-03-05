@@ -145,3 +145,23 @@ Nifi:
     storageClass: generic
     accessMode: ReadWriteOnce
     size: 8Gi
+
+Drill:
+  Name: drill
+  Image: "mustafaakin/drill"
+  ImageTag: "latest"
+  pullPolicy: IfNotPresent
+  Replicas: 1
+  Component: "drill"
+  resources:
+    limits:
+      cpu: 200m
+      memory: 4Gi
+    requests:
+      cpu: 100m
+      memory: 500Mi
+  persistence:
+    enabled: false
+    storageClass: generic
+    accessMode: ReadWriteOnce
+    size: 8Gi

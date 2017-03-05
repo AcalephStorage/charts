@@ -1,0 +1,57 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  labels:
+    app: drill
+    daemon: httpfs
+    heritage: {{.Release.Service | quote }}
+    release: {{.Release.Name | quote }}
+    chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+  name: drill
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: drill
+      labels:
+        app: drill
+        heritage: {{.Release.Service | quote }}
+        release: {{.Release.Name | quote }}
+        chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    spec:
+      containers:
+        - name: drill
+          image: "{{.Values.Drill.Image}}:{{.Values.Drill.ImageTag}}"
+          imagePullPolicy: "{{.Values.Drill.pullPolicy}}"
+          ports:
+            - name: http
+              containerPort: 8047
+            - name: rpcuser
+              containerPort: 31010
+            - name: rpccontrol
+              containerPort: 31011
+            - name: rpcdata
+              containerPort: 31012
+          env:
+            - name: CLUSTERID
+              value: drill
+            - name: ZKHOSTS
+              value: zookeeper-0:2181,zookeeper-1:2181,zookeeper-2:2181
+          livenessProbe:
+              httpGet:
+                path: /
+                port: 8047
+              initialDelaySeconds: 120
+              timeoutSeconds: 5
+          readinessProbe:
+              httpGet:
+                path: /
+                port: 8047
+              timeoutSeconds: 5
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "2Gi"
+              cpu: "1"
