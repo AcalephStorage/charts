@@ -1,0 +1,12 @@
+apiVersion: rook.io/v1beta1
+kind: Cluster
+metadata:
+  name: "{{ printf "%s-%s" .Release.Name .Values.Name | trunc 63 }}"
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  namespace: {{ .Release.Namespace }}
+  version: {{ .Values.cluster.version }}
+  useAllDevices: {{ .Values.cluster.useAllDevices }}

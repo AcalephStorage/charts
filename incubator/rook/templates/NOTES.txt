@@ -1,11 +1,7 @@
 
-  1. Download rook client
+  1. Launch the rook-client from: https://github.com/rook/rook/blob/master/demo/kubernetes/rook-client/rook-client.yml
 
-  2. Port forward Pod
-
-  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app=rook" -o jsonpath="{.items[0].metadata.name}")
-
-  kubectl port-forward $POD_NAME 8124:8124 --namespace {{ .Release.Namespace }}
+  2. Exec into Pod
 
   3. Check Rook Status
 

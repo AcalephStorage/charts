@@ -2,34 +2,20 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+Name: "rook"
+
 image:
-  repository: quay.io/rook/rookd
-  tag: v0.2.1
+  repository: quay.io/rook/rook-operator
+  tag: latest
   pullPolicy: IfNotPresent
-service:
-  name: rook
-  type: ClusterIP
-  externalPort: 8124
-  internalPort: 8124
 resources:
   limits:
-    cpu: 200m
-    memory: 2Gi
+    cpu: 100m
+    memory: 128Mi
   requests:
     cpu: 100m
-    memory: 1Gi
+    memory: 128Mi
 
-# Disable for testing
-hostNetwork: true
-
-# Generate with: curl -s -w "\n" 'https://discovery.etcd.io/new?size=1'
-# https://discovery.etcd.io/ec34d5490a92ce6973925f5b36bfdfc4
-discoveryToken:
-
-# sdb,sdc
-dataDevices:
-
-# Disable for testing (using an emptyDir)
-persistence:
-  enabled: true
-  hostPath: /var/lib/rook
+cluster:
+  version: latest
+  useAllDevices: false
