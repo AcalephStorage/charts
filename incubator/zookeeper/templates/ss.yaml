@@ -33,7 +33,7 @@ spec:
                   "topologyKey": "kubernetes.io/hostname"
                 }]
               }
-            } 
+            }
         {{- else if eq .Values.AntiAffinity "soft"}}
         scheduler.alpha.kubernetes.io/affinity: >
             {
@@ -138,6 +138,7 @@ spec:
       securityContext:
         runAsUser: 1000
         fsGroup: 1000
+  {{- if .Values.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: datadir
@@ -146,9 +147,14 @@ spec:
         volume.beta.kubernetes.io/storage-class: {{.Values.StorageClass | quote}}
         {{- else}}
         volume.alpha.kubernetes.io/storage-class: "default"
-        {{- end}} 
+        {{- end}}
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
           storage: {{.Values.Storage}}
+  {{- else }}
+      volumes:
+        - name: datadir
+          emptyDir: {}
+  {{- end }}
