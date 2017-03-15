@@ -1,3 +1,4 @@
+{{- if .Values.Namenode.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -24,3 +25,4 @@ spec:
     app: hadoop
     daemon: namenode
   # type: LoadBalancer
+{{- end }}

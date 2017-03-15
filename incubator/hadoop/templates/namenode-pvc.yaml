@@ -1,3 +1,4 @@
+{{- if .Values.Namenode.enabled }}
 # {{- if .Values.Namenode.persistence.enabled }}
 # kind: PersistentVolumeClaim
 # apiVersion: v1
@@ -28,3 +29,4 @@
 #     heritage: "{{ .Release.Service }}"
 # spec:
 #   emptyDir: {}
+{{- end }}

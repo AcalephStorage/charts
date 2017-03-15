@@ -1,3 +1,4 @@
+{{- if .Values.Hive.enabled }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -92,3 +93,4 @@ spec:
               port: 10000
             timeoutSeconds: 5
         resources: {}
+{{- end }}

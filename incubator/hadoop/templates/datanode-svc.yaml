@@ -1,3 +1,4 @@
+{{- if .Values.Datanode.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -18,3 +19,4 @@ spec:
     app: hadoop
     daemon: datanode
   clusterIP: None
+{{- end }}

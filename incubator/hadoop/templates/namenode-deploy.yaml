@@ -1,3 +1,4 @@
+{{- if .Values.Namenode.enabled }}
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
@@ -83,3 +84,4 @@ spec:
               timeoutSeconds: 5
           resources:
 {{ toYaml .Values.Namenode.resources | indent 12 }}
+{{- end }}

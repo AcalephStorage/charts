@@ -1,5 +1,8 @@
 
+zkHosts: zk-zookeeper-0.hs-zk-zookeeper:2181
+
 Namenode:
+  enabled: true
   Name: namenode
   Image: "uhopper/hadoop-namenode"
   ImageTag: "2.7.2"
@@ -27,6 +30,7 @@ Namenode:
 
 
 Datanode:
+  enabled: true
   Name: datanode
   Image: "uhopper/hadoop-datanode"
   ImageTag: "2.7.2"
@@ -47,6 +51,7 @@ Datanode:
     size: 8Gi
 
 Httpfs:
+  enabled: false
   Name: httpfs
   Image: "uhopper/hadoop"
   ImageTag: "2.7.2"
@@ -67,6 +72,7 @@ Httpfs:
     size: 8Gi
 
 Resourcemanager:
+  enabled: true
   Name: resourcemanager
   Image: "uhopper/hadoop-resourcemanager"
   ImageTag: "2.7.2"
@@ -87,6 +93,7 @@ Resourcemanager:
     size: 8Gi
 
 Nodemanager:
+  enabled: true
   Name: nodemanager
   Image: "uhopper/hadoop-nodemanager"
   ImageTag: "2.7.2"
@@ -107,6 +114,7 @@ Nodemanager:
     size: 8Gi
 
 Historyserver:
+  enabled: false
   Name: historyserver
   Image: "uhopper/hadoop-historyserver"
   ImageTag: "2.7.2"
@@ -126,7 +134,11 @@ Historyserver:
     accessMode: ReadWriteOnce
     size: 8Gi
 
+Hive:
+  enabled: false
+
 Nifi:
+  enabled: false
   Name: nifi
   Image: "mkobit/nifi"
   ImageTag: "latest"
@@ -147,12 +159,14 @@ Nifi:
     size: 8Gi
 
 Drill:
+  enabled: true
   Name: drill
   Image: "mustafaakin/drill"
   ImageTag: "latest"
   pullPolicy: IfNotPresent
   Replicas: 1
   Component: "drill"
+  clusterId: drill
   resources:
     limits:
       cpu: 200m

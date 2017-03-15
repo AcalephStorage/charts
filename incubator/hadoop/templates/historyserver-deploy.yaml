@@ -1,3 +1,4 @@
+{{- if .Values.Historyserver.enabled }}
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
@@ -23,7 +24,7 @@ spec:
       serviceAccount: default
       volumes:
         - name: hadoop-historyserver
-          {{- if .Values.Namenode.persistence.enabled }}
+          {{- if .Values.Historyserver.persistence.enabled }}
           persistentVolumeClaim:
             claimName: hadoop-historyserver
           {{- else }}
@@ -79,3 +80,4 @@ spec:
               timeoutSeconds: 5
           resources:
 {{ toYaml .Values.Namenode.resources | indent 12 }}
+{{- end }}

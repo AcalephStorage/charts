@@ -1,3 +1,4 @@
+{{- if .Values.Hive.enabled }}
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -37,3 +38,4 @@ spec:
             - pg_isready
           initialDelaySeconds: 60
           timeoutSeconds: 3
+{{- end }}
