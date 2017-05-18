@@ -1,0 +1,170 @@
+{{- if .Values.Drill.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: drill-storage
+data:
+  s3.sys.drill: |
+    {
+      "type": "file",
+      "enabled": true,
+      "connection": "s3a://drill/",
+      "workspaces": {
+        "root": {
+          "location": "/",
+          "writable": true,
+          "defaultInputFormat": "json"
+        },
+        "tmp": {
+          "location": "/tmp",
+          "writable": true,
+          "defaultInputFormat": null
+        },
+        "data": {
+          "location": "/data",
+          "writable": true,
+          "defaultInputFormat": "json"
+        }
+      },
+      "formats": {
+        "psv": {
+          "type": "text",
+          "extensions": [
+            "tbl"
+          ],
+          "delimiter": "|"
+        },
+        "csv": {
+          "type": "text",
+          "extensions": [
+            "csv"
+          ],
+          "delimiter": ","
+        },
+        "tsv": {
+          "type": "text",
+          "extensions": [
+            "tsv"
+          ],
+          "delimiter": "\t"
+        },
+        "parquet": {
+          "type": "parquet"
+        },
+        "json": {
+          "type": "json",
+          "extensions": [
+            "json",
+            ""
+          ]
+        },
+        "avro": {
+          "type": "avro"
+        }
+      }
+    }
+  cp.sys.drill: |
+    {
+      "type": "file",
+      "enabled": true,
+      "connection": "classpath:///",
+      "workspaces": null,
+      "formats": {
+        "csv": {
+          "type": "text",
+          "extensions": [
+            "csv"
+          ],
+          "delimiter": ","
+        },
+        "tsv": {
+          "type": "text",
+          "extensions": [
+            "tsv"
+          ],
+          "delimiter": "\t"
+        },
+        "json": {
+          "type": "json"
+        },
+        "parquet": {
+          "type": "parquet"
+        },
+        "avro": {
+          "type": "avro"
+        },
+        "csvh": {
+          "type": "text",
+          "extensions": [
+            "csvh"
+          ],
+          "extractHeader": true,
+          "delimiter": ","
+        }
+      }
+    }
+  dfs.sys.drill: |
+    {
+      "type": "file",
+      "enabled": true,
+      "connection": "file:///",
+      "workspaces": {
+        "root": {
+          "location": "/",
+          "writable": false,
+          "defaultInputFormat": null
+        },
+        "tmp": {
+          "location": "/tmp",
+          "writable": true,
+          "defaultInputFormat": null
+        }
+      },
+      "formats": {
+        "psv": {
+          "type": "text",
+          "extensions": [
+            "tbl"
+          ],
+          "delimiter": "|"
+        },
+        "csv": {
+          "type": "text",
+          "extensions": [
+            "csv"
+          ],
+          "delimiter": ","
+        },
+        "tsv": {
+          "type": "text",
+          "extensions": [
+            "tsv"
+          ],
+          "delimiter": "\t"
+        },
+        "parquet": {
+          "type": "parquet"
+        },
+        "json": {
+          "type": "json"
+        },
+        "avro": {
+          "type": "avro"
+        },
+        "sequencefile": {
+          "type": "sequencefile",
+          "extensions": [
+            "seq"
+          ]
+        },
+        "csvh": {
+          "type": "text",
+          "extensions": [
+            "csvh"
+          ],
+          "extractHeader": true,
+          "delimiter": ","
+        }
+      }
+    }
+{{- end }}

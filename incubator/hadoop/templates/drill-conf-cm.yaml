@@ -1,0 +1,53 @@
+{{- if .Values.Drill.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: drill-conf
+data:
+  core-site.xml: |
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <configuration>
+
+      <property>
+        <name>fs.s3a.access.key</name>
+        <value>AKIAIOSFODNN7EXAMPLE</value>
+      </property>
+
+      <property>
+        <name>fs.s3a.secret.key</name>
+        <value>wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</value>
+      </property>
+
+      <property>
+        <name>fs.s3a.connection.maximum</name>
+        <value>100</value>
+      </property>
+
+      <property>
+        <name>fs.s3a.connection.ssl.enabled</name>
+        <value>false</value>
+      </property>
+
+      <property>
+        <name>fs.s3a.endpoint</name>
+        <value>http://orderly-umbrellabird-minio-svc.default:9000/</value>
+      </property>
+
+      <property>
+        <name>fs.s3a.path.style.access</name>
+        <value>true</value>
+      </property>
+
+      <property>
+        <name>fs.alluxio.impl</name>
+        <value>alluxio.hadoop.FileSystem</value>
+      </property>
+
+    </configuration>
+  drill-override.conf: |
+    drill.exec: {
+      cluster-id: "{{ .Values.Drill.clusterId }}",
+      zk.connect: "{{ .Values.zkHosts }}",
+      sys.store.provider.local.path: "/drill-storage"
+    }
+{{- end }}
